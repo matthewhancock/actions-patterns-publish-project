@@ -14,7 +14,8 @@ inputs:
     required: true
   path-project:
     description: 'Project File Path'
-    required: true
+    required: false
+    default: ${{ inputs.project }}
   path-tests-unit:
     description: 'Unit Tests Project File Path'
     required: false
