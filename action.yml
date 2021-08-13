@@ -1,0 +1,48 @@
+#dependencies:
+#  steps:
+#  - dotnet environment setup
+#  - build solution
+#  env:
+#    BRANCH # parsed branch name
+#    COMMIT_FILES # modified files (csv)
+
+name: 'Publish Project Project'
+description: 'Will create a NuGet package if project has modifications and passes unit tests'
+inputs:
+  project:
+    description: 'Project Assembly Name'
+    required: true
+  path-project:
+    description: 'Project File Path'
+    required: true
+  path-tests-unit:
+    description: 'Unit Tests Project File Path'
+    required: false
+outputs:
+  build-version:
+    description: "Build Version"
+    value: ${{ env.NUPKG }}
+runs:
+  using: "composite"
+  steps:
+  - id: exit-if-no-files
+    name: Exit If Project Not Modified
+    if: contains(env.COMMIT_FILES, github.event.inputs.path-project) == 0
+    run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
+  
+  - name: Run Unit Tests
+    if: ${{ github.event.inputs.path-tests-unit != '' }}
+    run: dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
+      
+  - name: Create Package
+    run: |
+      echo "Packaging: ${{ env.PROJECT }}"
+      echo "Branch: ${{ env.BRANCH }}"
+      logs=$(dotnet pack "${{ github.event.inputs.path-project }}" --configuration Release --no-build --output .nupkgs /p:Branch=${{ env.BRANCH }})
+      echo $logs
+      echo "NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)" >> $GITHUB_ENV
+        
+  - name: Publish Package
+    run: |
+      echo "Publishing: ${{ env.NUPKG }}"
+      dotnet nuget push "${{ env.NUPKG }}" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET }}
