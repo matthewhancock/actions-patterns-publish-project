@@ -18,6 +18,9 @@ inputs:
   path-tests-unit:
     description: 'Unit Tests Project File Path'
     required: false
+  #defaulted
+  secret-nuget:
+    default: ${{ secrets.NUGET }}
 outputs:
   build-version:
     description: "Build Version"
@@ -53,4 +56,4 @@ runs:
     shell: bash
     run: |
       echo "Publishing: ${{ env.NUPKG }}"
-      dotnet nuget push "${{ env.NUPKG }}" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET }}
+      dotnet nuget push "${{ env.NUPKG }}" --source https://api.nuget.org/v3/index.json --api-key ${{ github.event.inputs.secret-nuget }}
