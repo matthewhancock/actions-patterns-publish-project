@@ -26,7 +26,7 @@ inputs:
     description: 'Branch name of Commit'
     required: true
   env-commit-files:
-    description: 'Modified Files in Commit (csv);
+    description: 'Modified Files in Commit (csv)'
     required: true
 outputs:
   build-version:
