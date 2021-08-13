@@ -34,8 +34,9 @@ runs:
     #run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
     shell: bash
     run: |
-      if [[ "${{ env.COMMIT_FILES }}" != *"${{ github.event.inputs.path-project }}"* ]]; then
-        echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
+      if [[ "${{ env.COMMIT_FILES }}" -ne *"${{ github.event.inputs.path-project }}"* ]]; then
+        echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"'
+        exit 1
       fi
   
   - name: Run Unit Tests
@@ -43,7 +44,7 @@ runs:
     #run: dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
     shell: bash
     run: |
-      if [[ ${{ github.event.inputs.path-tests-unit }} != '' ]]; then
+      if [[ -n ${{ github.event.inputs.path-tests-unit }} ]]; then
         dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
       fi
       
