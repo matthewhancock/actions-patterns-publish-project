@@ -27,12 +27,16 @@ runs:
   steps:
   - id: exit-if-no-files
     name: Exit If Project Not Modified
-    if: contains(env.COMMIT_FILES, github.event.inputs.path-project) == 0
-    run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
+    #if: contains(env.COMMIT_FILES, github.event.inputs.path-project) == 0
+    #run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
+    run: |
+      contains(env.COMMIT_FILES, github.event.inputs.path-project) == 0 && echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
   
   - name: Run Unit Tests
-    if: ${{ github.event.inputs.path-tests-unit != '' }}
-    run: dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
+    #if: ${{ github.event.inputs.path-tests-unit != '' }}
+    #run: dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
+    run: |
+      ${{ github.event.inputs.path-tests-unit != '' }} && dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
       
   - name: Create Package
     run: |
