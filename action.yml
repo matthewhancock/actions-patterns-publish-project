@@ -30,29 +30,28 @@ runs:
   steps:
   - id: exit-if-no-files
     name: Exit If Project Not Modified
-    #if: contains(env.COMMIT_FILES, github.event.inputs.path-project) == 0
-    #run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
+    #if: contains(env.COMMIT_FILES, inputs.path-project) == 0
+    #run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ inputs.path-project }}"' && exit 1
     shell: bash
     run: |
-      echo ${{ env.COMMIT_FILES }}
-      echo a
-      echo ${{ github.event.inputs.path-project }}
-      echo b
-      if [ "${{ env.COMMIT_FILES }}" -ne *"${{ github.event.inputs.path-project }}"* ]
+      echo "Modified Files: ${{ env.COMMIT_FILES }}"
+      echo "Project Path: ${{ inputs.path-project }}"
+      if [ "${{ env.COMMIT_FILES }}" != *"${{ inputs.path-project }}"* ]
       then
-        echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"'
+        echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ inputs.path-project }}"'
         exit 1
       fi
   
   - name: Run Unit Tests
-    #if: ${{ github.event.inputs.path-tests-unit != '' }}
-    #run: dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
+    #if: ${{ inputs.path-tests-unit != '' }}
+    #run: dotnet test "${{ inputs.path-tests-unit }}" --configuration Release --no-build
     shell: bash
     run: |
-      echo c
-      if [ -n ${{ github.event.inputs.path-tests-unit }} ]
+      echo "Unit Test Path: ${{ inputs.path-tests-unit }}"
+      if [ -n ${{ inputs.path-tests-unit }} ]
       then
-        dotnet test "${{ github.event.inputs.path-tests-unit }}" --configuration Release --no-build
+        echo d
+        dotnet test "${{ inputs.path-tests-unit }}" --configuration Release --no-build
       fi
       
   - name: Create Package
@@ -60,7 +59,7 @@ runs:
     run: |
       echo "Packaging: ${{ env.PROJECT }}"
       echo "Branch: ${{ env.BRANCH }}"
-      logs=$(dotnet pack "${{ github.event.inputs.path-project }}" --configuration Release --no-build --output .nupkgs /p:Branch=${{ env.BRANCH }})
+      logs=$(dotnet pack "${{ inputs.path-project }}" --configuration Release --no-build --output .nupkgs /p:Branch=${{ env.BRANCH }})
       echo $logs
       echo "NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)" >> $GITHUB_ENV
         
@@ -68,4 +67,4 @@ runs:
     shell: bash
     run: |
       echo "Publishing: ${{ env.NUPKG }}"
-      dotnet nuget push "${{ env.NUPKG }}" --source https://api.nuget.org/v3/index.json --api-key ${{ github.event.inputs.nuget-apikey }}
+      dotnet nuget push "${{ env.NUPKG }}" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
