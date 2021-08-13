@@ -2,11 +2,8 @@
 #  steps:
 #  - dotnet environment setup
 #  - build solution
-#  env:
-#    BRANCH # parsed branch name
-#    COMMIT_FILES # modified files (csv)
 
-name: 'Publish Project Project'
+name: 'Publish Project Package'
 description: 'Will create a NuGet package if project has modifications and passes unit tests'
 inputs:
   project:
@@ -21,7 +18,7 @@ inputs:
   nuget-apikey:
     description: 'API Key for authenticating to Nuget'
     required: true
-  # Environment Variables: don't seem to get passed, so pass them manually
+  # Environment Variables: don't get passed between jobs, so pass them manually
   env-commit-branch:
     description: 'Branch name of Commit'
     required: true
