@@ -34,6 +34,8 @@ runs:
     #run: echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"' && exit 1
     shell: bash
     run: |
+      echo ${{ env.COMMIT_FILES }}
+      echo ${{ github.event.inputs.path-project }}
       if [[ "${{ env.COMMIT_FILES }}" -ne *"${{ github.event.inputs.path-project }}"* ]]; then
         echo 'Modified files (${{ env.COMMIT_FILES }}) do not contain "${{ github.event.inputs.path-project }}"'
         exit 1
