@@ -32,17 +32,17 @@ outputs:
 runs:
   using: "composite"
   steps:
-  - id: exit-if-no-files
-    name: Exit If Project Not Modified
-    shell: bash
-    run: |
-      echo "Modified Files: ${{ inputs.env-commit-files }}"
-      echo "Project Path: ${{ inputs.path-project }}"
-      if [[ "${{ inputs.env-commit-files }}" != *"${{ inputs.path-project }}/"* ]]
-      then
-        echo 'Modified files (${{ inputs.env-commit-files }}) do not contain "${{ inputs.path-project }}"'
-        exit 1
-      fi
+#  - id: exit-if-no-files
+#    name: Exit If Project Not Modified
+#    shell: bash
+#    run: |
+#      echo "Modified Files: ${{ inputs.env-commit-files }}"
+#      echo "Project Path: ${{ inputs.path-project }}"
+#      if [[ "${{ inputs.env-commit-files }}" != *"${{ inputs.path-project }}/"* ]]
+#      then
+#        echo 'Modified files (${{ inputs.env-commit-files }}) do not contain "${{ inputs.path-project }}"'
+#        exit 1
+#      fi
   
   - name: Run Unit Tests
     shell: bash
@@ -60,10 +60,15 @@ runs:
       echo "Branch: ${{ inputs.env-commit-branch }}"
       logs=$(dotnet pack "${{ inputs.path-project }}" --configuration Release --no-build --output .nupkgs /p:Branch=${{ env.BRANCH }})
       echo $logs
-      echo "NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)" >> $GITHUB_ENV
+      NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
+      echo $NUPKG
+      echo "$NUPKG" >> $GITHUB_ENV
+      echo 'Parse Again: $(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)'
+      pkg=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
+      echo 'Pkg: $pkg'
         
-  - name: Publish Package
-    shell: bash
-    run: |
-      echo "Publishing: $NUPKG"
-      dotnet nuget push "$NUPKG" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
+ # - name: Publish Package
+ #   shell: bash
+ #   run: |
+ #     echo "Publishing: $pkg"
+ #     dotnet nuget push "$pkg" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
