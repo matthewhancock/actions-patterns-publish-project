@@ -32,17 +32,17 @@ outputs:
 runs:
   using: "composite"
   steps:
-#  - id: exit-if-no-files
-#    name: Exit If Project Not Modified
-#    shell: bash
-#    run: |
-#      echo "Modified Files: ${{ inputs.env-commit-files }}"
-#      echo "Project Path: ${{ inputs.path-project }}"
-#      if [[ "${{ inputs.env-commit-files }}" != *"${{ inputs.path-project }}/"* ]]
-#      then
-#        echo 'Modified files (${{ inputs.env-commit-files }}) do not contain "${{ inputs.path-project }}"'
-#        exit 1
-#      fi
+  - id: exit-if-no-files
+    name: Exit If Project Not Modified
+    shell: bash
+    run: |
+      echo "Modified Files: ${{ inputs.env-commit-files }}"
+      echo "Project Path: ${{ inputs.path-project }}"
+      if [[ "${{ inputs.env-commit-files }}" != *"${{ inputs.path-project }}/"* ]]
+      then
+        echo 'Modified files (${{ inputs.env-commit-files }}) do not contain "${{ inputs.path-project }}"'
+        exit 1
+      fi
   
   - name: Run Unit Tests
     shell: bash
