@@ -62,10 +62,10 @@ runs:
       echo $logs
       NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
       echo $NUPKG
-      echo "$NUPKG" >> $GITHUB_ENV
+      echo "NUPKG=$NUPKG" >> $GITHUB_ENV
       echo "Parse Again: $(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)"
       pkg=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
-      echo 'Pkg: $pkg'
+      echo "Pkg: $pkg"
         
  # - name: Publish Package
  #   shell: bash
