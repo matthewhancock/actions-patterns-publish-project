@@ -65,5 +65,5 @@ runs:
   - name: Publish Package
     shell: bash
     run: |
-      echo "Publishing: ${{ env.NUPKG }}"
-      dotnet nuget push "${{ env.NUPKG }}" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
+      echo "Publishing: $NUPKG"
+      dotnet nuget push "$NUPKG" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
