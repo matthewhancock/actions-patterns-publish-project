@@ -63,7 +63,7 @@ runs:
       NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
       echo $NUPKG
       echo "$NUPKG" >> $GITHUB_ENV
-      echo 'Parse Again: $(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)'
+      echo "Parse Again: $(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)"
       pkg=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
       echo 'Pkg: $pkg'
         
