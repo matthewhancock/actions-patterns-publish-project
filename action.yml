@@ -60,15 +60,12 @@ runs:
       echo "Branch: ${{ inputs.env-commit-branch }}"
       logs=$(dotnet pack "${{ inputs.path-project }}" --configuration Release --no-build --output .nupkgs /p:Branch=${{ env.BRANCH }})
       echo $logs
-      NUPKG=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
-      echo $NUPKG
-      echo "NUPKG=$NUPKG" >> $GITHUB_ENV
-      echo "Parse Again: $(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)"
-      pkg=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
-      echo "Pkg: $pkg"
+      path-package=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
+      echo "NUPKG=$path-package" >> $GITHUB_ENV
+      echo "Package File: $path-package"
         
- # - name: Publish Package
- #   shell: bash
- #   run: |
- #     echo "Publishing: $pkg"
- #     dotnet nuget push "$pkg" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
+  - name: Publish Package
+    shell: bash
+    run: |
+      echo "Publishing: $path-package"
+      dotnet nuget push "$path-package" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
