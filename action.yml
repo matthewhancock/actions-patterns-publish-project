@@ -53,7 +53,7 @@ runs:
         dotnet test "${{ inputs.path-tests-unit }}" --configuration Release --no-build
       fi
       
-  - name: Create Package
+  - name: Publish Package
     shell: bash
     run: |
       echo "Packaging: ${{ inputs.project }}"
@@ -63,9 +63,7 @@ runs:
       package=$(temp=${logs#*Successfully created package \'}; temp=${temp%\'*}; echo $temp)
       echo "NUPKG=$package" >> $GITHUB_ENV
       echo "Package File: $package"
-        
-  - name: Publish Package
-    shell: bash
-    run: |
+      # Can't pass variable between steps, and environment variable doesn't get updated
+      # Unfortunately need to include both steps in one to enable passing a dynamic variable
       echo "Publishing: $package"
       dotnet nuget push "$package" --source https://api.nuget.org/v3/index.json --api-key ${{ inputs.nuget-apikey }}
